@@ -37,10 +37,11 @@ namespace testApp.Tests
         public async void Get_All_Return_TenProducts()
         {
             var result = await productService.Get();
-            Assert.Equal(10, result.Count());
+            var actual = result.Count();
+            Assert.Equal(10, actual);
         }
         [Fact]
-        public void Get_ById_ShouldntBeNull()
+        public void Find_ShouldntBeNull()
         {
             var result = productService.GetById(2);
             Assert.NotNull(result);
@@ -48,8 +49,9 @@ namespace testApp.Tests
         [Fact]
         public void Delete_One_ShouldReturn_NineProducts()
         {
-            var result = productService.Delete(1);
-            Assert.Equal(9, productService.Get().Result.Count());
+            productService.Delete(1);
+            var result = productService.Get().Result.Count();
+            Assert.Equal(9, result);
         }
     }
 }
