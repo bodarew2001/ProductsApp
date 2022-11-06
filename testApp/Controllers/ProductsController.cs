@@ -6,40 +6,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using testApp.Models;
+using testApp.Services;
 
 namespace testApp.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly MarketContext _context;
-
-        public ProductsController(MarketContext context)
-        {
-            _context = context;
-        }
+        private readonly ProductService _service = new ProductService();
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Products.ToListAsync());
+            return View(await _service.Get());
         }
 
         // GET: Products/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
+            if (_service.ProductExists(id))
+                return View(_service.GetById(id));
+            else
+                return RedirectToAction("Index");
         }
 
         // GET: Products/Create
@@ -54,25 +41,17 @@ namespace testApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Product product)
         {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+            _service.Create(product);
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            return View(product);
+            if (_service.ProductExists(id))
+                return View(_service.GetById(id));
+            else
+                return RedirectToAction("Index");
         }
 
         // POST: Products/Edit/5
@@ -82,50 +61,17 @@ namespace testApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Description,Stock")] Product product)
         {
-            if (id != product.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Products.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(product);
+            _service.Edit(id, product);
+            return RedirectToAction("Index");
         }
 
         // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
+            if(_service.ProductExists(id))
+                return View(_service.GetById(id));
+            else
+                return RedirectToAction("Index");
         }
 
         // POST: Products/Delete/5
@@ -133,23 +79,8 @@ namespace testApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Products == null)
-            {
-                return Problem("Entity set 'MarketContext.Products'  is null.");
-            }
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-            }
-            
-            await _context.SaveChangesAsync();
+            _service.Delete(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProductExists(int id)
-        {
-          return _context.Products.Any(e => e.Id == id);
         }
     }
 }
