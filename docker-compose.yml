@@ -8,10 +8,12 @@ services:
     restart: always
     ports:
       - "5050:80"
-    depends_on:
+    depends_on: 
       - db
     environment:
         ASPNETCORE_ENVIRONMENT: Development
+    volumes:
+        - /home/app/src/
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -22,6 +24,8 @@ services:
       - MSSQL_SA_PASSWORD=Bww189383
     ports:
       - "1433:1433"
+    volumes:
+      - /home/app/db/
   db-management:
     image: sqlpad/sqlpad
     container_name: sqlpad
@@ -35,3 +39,5 @@ services:
       SQLPAD_CONNECTIONS_mssqlserver_database: Market
       SQLPAD_CONNECTIONS_mssqlserver_username: sa
       SQLPAD_CONNECTIONS_mssqlserver_password: Bww189383
+    volumes:
+      - /home/app/sqlpad/
