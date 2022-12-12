@@ -1,0 +1,37 @@
+version: '3.5'
+
+services:
+  webapp:
+    image: bodarev2001/webapp:latest
+    #build: testApp
+    container_name: webapp
+    restart: always
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    environment:
+        ASPNETCORE_ENVIRONMENT: Development
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: db
+    hostname: sql1
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Bww189383
+    ports:
+      - "1433:1433"
+  db-management:
+    image: sqlpad/sqlpad
+    container_name: sqlpad
+    ports:
+      - "3000:3000"
+    environment:
+      SQLPAD_ADMIN: 'admin@sqlpad.com'
+      SQLPAD_ADMIN_PASSWORD: 'admin'
+      SQLPAD_CONNECTIONS_mssqlserver_name: Market
+      SQLPAD_CONNECTIONS_mssqlserver_driver: sqlserver
+      SQLPAD_CONNECTIONS_mssqlserver_database: Market
+      SQLPAD_CONNECTIONS_mssqlserver_username: sa
+      SQLPAD_CONNECTIONS_mssqlserver_password: Bww189383
