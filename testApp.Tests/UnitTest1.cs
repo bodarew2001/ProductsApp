@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Localization;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
+using testApp.Data;
 using testApp.Models;
 using testApp.Services;
 
@@ -8,16 +9,16 @@ namespace testApp.Tests
 {
     public class UnitTest1
     {
-        static DbContextOptions<MarketContext> option = new DbContextOptionsBuilder<MarketContext>()
+        static DbContextOptions<ApplicationDbContext> option = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "Products").Options;
-        ProductService productService = new ProductService(new MarketContext(option));
-        public async Task Init()
+        ProductService productService = new ProductService(new ApplicationDbContext(option));
+        public void Init()
         {
-            if (productService.Get().Result.Count == 0)
+            if (productService.Get().Count == 0)
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    await productService.Create(new Product()
+                    productService.Create(new Product()
                     {
                         Name = i.ToString(),
                         Price = i,
@@ -34,9 +35,9 @@ namespace testApp.Tests
             Init();
         }
         [Fact]
-        public async void Get_All_Return_TenProducts()
+        public void Get_All_Return_TenProducts()
         {
-            var result = await productService.Get();
+            var result = productService.Get();
             var actual = result.Count();
             Assert.Equal(10, actual);
         }
@@ -50,7 +51,7 @@ namespace testApp.Tests
         public void Delete_One_ShouldReturn_NineProducts()
         {
             productService.Delete(1);
-            var result = productService.Get().Result.Count();
+            var result = productService.Get().Count();
             Assert.Equal(9, result);
         }
         [Fact]

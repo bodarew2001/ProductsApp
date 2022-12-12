@@ -7,37 +7,34 @@ namespace testApp.Services
 {
     public class ProductService
     {
-        MarketContext _context;
-        public ProductService()
-        {
-            _context = new MarketContext();
-        }
-        public ProductService(MarketContext context)
+        ApplicationDbContext _context;
+
+        public ProductService(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<List<Product>> Get()
+        public List<Product> Get()
         {
-            return await _context.Products.ToListAsync();
+            return _context.Products.ToList();
         }
         public Product GetById(int id)
         {
             return _context.Products.Where(x => x.Id == id).FirstOrDefault();
         }
-        public async Task Create(Product product)
+        public void Create(Product product)
         {
             _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
-        public async Task Edit(int id, Product product)
+        public void Edit(int id, Product product)
         {
             if (id != product.Id)
             {
                 return;
             }
             _context.Products.Update(product);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             if (!ProductExists(product.Id))
             {
                 return;
@@ -47,18 +44,18 @@ namespace testApp.Services
                 return;
             }
         }
-        public async Task Delete(int id)
+        public void Delete(int id)
         {
             if (_context.Products == null)
             {
                 return;
             }
-            var product = await _context.Products.FindAsync(id);
+            var product = _context.Products.Find(id);
             if (product != null)
             {
                 _context.Products.Remove(product);
             }
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
         public bool ProductExists(int id)
         {

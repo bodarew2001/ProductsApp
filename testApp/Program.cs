@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using testApp.Data;
-using testApp.Middlewares;
 using testApp.Models;
+using testApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +21,8 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddDbContext<MarketContext>(options => options.UseSqlServer(@"Server=.;Database=Market;Trusted_Connection=True;"));
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<ProductService>();
 
 var app = builder.Build();
 
@@ -51,6 +51,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
-app.UseTestMiddleware();
 
 app.Run();

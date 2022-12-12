@@ -12,16 +12,20 @@ namespace testApp.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly ProductService _service = new ProductService();
+        private readonly ProductService _service;
+        public ProductsController(ProductService service)
+        {
+            _service = service;
+        }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _service.Get());
+            return View(_service.Get());
         }
 
         // GET: Products/Details/5
-        public async Task<IActionResult> Details(int id)
+        public IActionResult Details(int id)
         {
             if (_service.ProductExists(id))
                 return View(_service.GetById(id));
@@ -39,14 +43,14 @@ namespace testApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> Create(Product product)
+        public IActionResult Create(Product product)
         {
             _service.Create(product);
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int id)
+        public IActionResult Edit(int id)
         {
             if (_service.ProductExists(id))
                 return View(_service.GetById(id));
@@ -59,16 +63,16 @@ namespace testApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Description,Stock")] Product product)
+        public IActionResult Edit(int id, [Bind("Id,Name,Price,Description,Stock")] Product product)
         {
             _service.Edit(id, product);
             return RedirectToAction("Index");
         }
 
         // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
-            if(_service.ProductExists(id))
+            if (_service.ProductExists(id))
                 return View(_service.GetById(id));
             else
                 return RedirectToAction("Index");
@@ -77,7 +81,7 @@ namespace testApp.Controllers
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
             _service.Delete(id);
             return RedirectToAction(nameof(Index));
