@@ -54,10 +54,5 @@ namespace testApp.Tests
             var result = productService.Get().Count();
             Assert.Equal(9, result);
         }
-        [Fact]
-        public void Fail()
-        {
-            Assert.True(false);
-        }
     }
 }
