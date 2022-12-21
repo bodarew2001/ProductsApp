@@ -20,8 +20,8 @@ services:
     container_name: db
     hostname: sql1
     environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Bww189383
+      ACCEPT_EULA: 'Y'
+      MSSQL_SA_PASSWORD: ${SQL_PASS}
     ports:
       - "1433:1433"
     volumes:
@@ -32,12 +32,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      SQLPAD_ADMIN: 'admin@sqlpad.com'
-      SQLPAD_ADMIN_PASSWORD: 'admin'
-      SQLPAD_CONNECTIONS_mssqlserver_name: Market
-      SQLPAD_CONNECTIONS_mssqlserver_driver: sqlserver
-      SQLPAD_CONNECTIONS_mssqlserver_database: Market
-      SQLPAD_CONNECTIONS_mssqlserver_username: sa
-      SQLPAD_CONNECTIONS_mssqlserver_password: Bww189383
+      SQLPAD_ADMIN: ${SQLPAD_LOGIN}
+      SQLPAD_ADMIN_PASSWORD: ${SQLPAD_PASS}
     volumes:
       - /home/app/sqlpad/
