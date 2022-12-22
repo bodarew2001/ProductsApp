@@ -19,6 +19,8 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: db
     hostname: sql1
+    env_file:
+      - ../.env
     environment:
       ACCEPT_EULA: 'Y'
       MSSQL_SA_PASSWORD: ${SQL_PASS}
@@ -29,6 +31,8 @@ services:
   db-management:
     image: sqlpad/sqlpad
     container_name: sqlpad
+    env_file:
+      - ../.env
     ports:
       - "3000:3000"
     environment:
